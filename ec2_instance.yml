@@ -5,6 +5,9 @@ Parameters:
   SSHPrefixList:
     Description: Enter SSH Prefix list (get it from the Managed prefix lists page)
     Type: String
+  VPCID:
+    Description: Enter VPC ID to place the subnet in
+    Type: String
     
 Resources:
   EC2Instance:
@@ -13,7 +16,8 @@ Resources:
       ImageId: ami-04a37924ffe27da53
       InstanceType: t2.micro
       SecurityGroupIds:
-        - !Ref EC2SecurityGroup
+        - !GetAtt EC2SecurityGroup.GroupId
+      SubnetId: !Ref mySubnet
       UserData:
           Fn::Base64: !Sub |
              #!/bin/bash
@@ -47,3 +51,21 @@ Resources:
           FromPort: 8080
           ToPort: 8080
           CidrIp: 0.0.0.0/0
+
+  mySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPCID
+      CidrBlock: 172.31.48.0/20
+      AvailabilityZone: "ap-south-1a"
+      
+  myRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPCID
+      
+  mySubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref mySubnet
+      RouteTableId: !Ref myRouteTable
