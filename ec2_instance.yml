@@ -31,6 +31,7 @@ Resources:
              sudo yum install git -y
              sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
              sudo chmod +x /usr/local/bin/docker-compose
+             docker run -p 80:80 nginx
 
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -109,3 +110,8 @@ Resources:
       TargetType: instance
       Targets:
         - Id: !Ref EC2Instance
+
+Outputs:
+ AppLoadBalancerUrl:
+   Description: The URL of the App Load Balancer
+   Value: !GetAtt ALB.DNSName
