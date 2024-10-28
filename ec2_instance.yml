@@ -31,7 +31,9 @@ Resources:
              sudo yum install git -y
              sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
              sudo chmod +x /usr/local/bin/docker-compose
-             docker run -p 80:80 nginx
+             git clone https://github.com/jchetan/docker.git
+             cd docker
+             docker-compose up --build
 
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -104,7 +106,7 @@ Resources:
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 2
       VpcId: vpc-075d372b61692417a
-      Port: 80
+      Port: 8080
       Protocol: HTTP
       HealthCheckPath: /
       TargetType: instance
