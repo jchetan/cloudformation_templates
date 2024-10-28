@@ -84,3 +84,28 @@ Resources:
         - !Ref SubnetIdb
       SecurityGroups:
         - !GetAtt ALBSecurityGroup.GroupId
+  
+  HttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:      
+      DefaultActions:        
+        - Order: 1
+          Type: forward
+          TargetGroupArn: !Ref AuthTargetGroup
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+  
+  AuthTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 30
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      VpcId: vpc-075d372b61692417a
+      Port: 80
+      Protocol: HTTP
+      HealthCheckPath: /
+      TargetType: instance
+      Targets:
+        - Id: !Ref EC2Instance
