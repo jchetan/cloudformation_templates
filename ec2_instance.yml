@@ -5,6 +5,12 @@ Parameters:
   SSHPrefixList:
     Description: Enter SSH Prefix list (get it from the Managed prefix lists page)
     Type: String
+  SubnetIda:
+    Description: Enter subnet id a
+    Type: String
+  SubnetIdb:
+    Description: Enter subnet id b
+    Type: String
     
 Resources:
   EC2Instance:
@@ -14,6 +20,7 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !GetAtt EC2SecurityGroup.GroupId
+      SubnetId: !Ref SubnetIda
       UserData:
           Fn::Base64: !Sub |
              #!/bin/bash
@@ -47,3 +54,31 @@ Resources:
           FromPort: 8080
           ToPort: 8080
           CidrIp: 0.0.0.0/0
+  
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "ALBSecurityGroup"
+      GroupDescription: "Allow HTTP/HTTPS/8080 traffic from internet for ALB"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+          
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      Subnets:
+        - !Ref SubnetIda
+        - !Ref SubnetIdb
