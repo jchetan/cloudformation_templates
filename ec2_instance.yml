@@ -14,6 +14,15 @@ Resources:
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref EC2SecurityGroup
+      UserData:
+          Fn::Base64: !Sub |
+             #!/bin/bash
+             yum update -y
+             sudo yum install -y docker
+             sudo service docker start
+             sudo usermod -a -G docker ec2-user
+             sudo yum install git -y
+
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -36,3 +45,7 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 13.233.177.0/29 # this is based on the suggestion from EC2 Connect
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: !Ref MyIP
