@@ -82,3 +82,5 @@ Resources:
       Subnets:
         - !Ref SubnetIda
         - !Ref SubnetIdb
+      SecurityGroups:
+        - !GetAtt ALBSecurityGroup.GroupId
