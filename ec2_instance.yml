@@ -33,7 +33,7 @@ Resources:
              sudo chmod +x /usr/local/bin/docker-compose
              git clone https://github.com/jchetan/docker.git
              cd docker
-             docker-compose up --build
+             docker-compose -f docker-compose-prod.yml up --build
 
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -106,7 +106,7 @@ Resources:
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 2
       VpcId: vpc-075d372b61692417a
-      Port: 8080
+      Port: 80
       Protocol: HTTP
       HealthCheckPath: /
       TargetType: instance
