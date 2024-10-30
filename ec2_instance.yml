@@ -5,12 +5,15 @@ Parameters:
   SSHPrefixList:
     Description: Enter SSH Prefix list (get it from the Managed prefix lists page)
     Type: String
+    Default: pl-0fa83cebf909345ca
   SubnetIda:
     Description: Enter subnet id a
     Type: String
+    Default: subnet-07086a320cb5c5593
   SubnetIdb:
     Description: Enter subnet id b
     Type: String
+    Default: subnet-0c7e7361a4f292993
     
 Resources:
   EC2Instance:
@@ -39,44 +42,28 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupName: "EC2SecurityGroup"
-      GroupDescription: "Allow HTTP/HTTPS and SSH inbound and outbound traffic"
+      GroupDescription: "Allow HTTP and SSH inbound and outbound traffic"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId
+          SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId     
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           SourcePrefixListId: !Ref SSHPrefixList
-        - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
-          SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId
-  
+          
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupName: "ALBSecurityGroup"
-      GroupDescription: "Allow HTTP/HTTPS/8080 traffic from internet for ALB"
+      GroupDescription: "Allow HTTP traffic from internet for ALB"
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
-          CidrIp: 0.0.0.0/0
-          
+                  
   ALB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
